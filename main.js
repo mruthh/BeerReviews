@@ -8,3 +8,13 @@ appModel.get('beers').add([
 
 
 var appView = new AppView({ model: appModel });
+
+/*beer editing
+listen for click on edit button on beer view,
+when clicked, 
+edit on enter (and set value to empty)
+
+
+
+
+*/

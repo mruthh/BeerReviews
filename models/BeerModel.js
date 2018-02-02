@@ -1,7 +1,8 @@
 var BeerModel = Backbone.Model.extend({
   defaults: function (){
     return {
-      name: 'beer'
+      name: 'beer',
+      editMode: false
     }
   }
 })

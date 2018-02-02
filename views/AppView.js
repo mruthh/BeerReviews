@@ -11,6 +11,7 @@ var AppView = Backbone.View.extend({
     this.$abvInput = $('#abv-input');
     this.$imgUrl = $('#img-input')
     this.listenTo(this.model.get('beers'), 'add', this.renderBeer);
+    this.listenTo(this.model.get('beers'), 'remove', this.renderBeers)
     this.renderBeers();
   },
 
@@ -29,6 +30,8 @@ var AppView = Backbone.View.extend({
   },
 
   renderBeers: function () {
+    console.log('rendering beer list')
+  this.$('.beer-list').empty();
   this.model.get('beers').each(function (m) {
     this.renderBeer(m);
   }, this);
