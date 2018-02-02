@@ -6,34 +6,58 @@ var AppView = Backbone.View.extend({
   },
 
   initialize: function () {
-    this.$nameInput = $('#name-input');
-    this.$styleInput = $('#style-input');
-    this.$abvInput = $('#abv-input');
-    this.$imgUrl = $('#img-input')
+    this.$nameInput = this.$('#name-input');
+    this.$styleInput = this.$('#style-input');
+    this.$abvInput = this.$('#abv-input');
+    this.$imgUrl = this.$('#img-input');
+    this.detailView = null;
+
+    this.$beerList = this.$('.beer-list');
+
     this.listenTo(this.model.get('beers'), 'add', this.renderBeer);
-    this.listenTo(this.model.get('beers'), 'remove', this.renderBeers)
+
+    this.listenTo(this.model, 'change:show_reviews', this.renderPage);
+
+    this.listenTo(this.model, 'change:current_beer', this.renderDetailView);
+
+    this.listenTo(this.model.get('beers'), 'reset', this.renderBeers);
+
+    this.listenTo(this.model.get('beers'), 'destroy', this.renderBeers)
+
     this.renderBeers();
   },
 
+  renderPage: function () {
+    this.$('.reviews-container').toggleClass('show', this.model.get('show_reviews'));
+    this.$('.beers-container').toggleClass('show', !this.model.get('show_reviews'));
+  },
+
+  renderDetailView: function () {
+    if (this.detailView) {
+      this.detailView.remove();
+    }
+    this.detailView = new BeerDetailView({ model: this.model.get('current_beer')});
+    this.$('.reviews-container').append(this.detailView.render().el);
+  },
+
   createBeer: function () {
-    this.model.get('beers').add({
-      name: this.$nameInput.val(),
-      style: this.$styleInput.val(),
-      abv: this.$abvInput.val(),
-      image_url: this.$imgUrl.val()
-    });
+    this.model.get('beers').create({
+      name: this.$('#name-input').val(),
+      style: this.$('#style-input').val(),
+      abv: parseInt(this.$('#abv-input').val()),
+      image_url: this.$('#img-input').val()
+    }, { wait: true });
   },
 
   renderBeer: function (beer) {
     var beerView = new BeerView({ model: beer });
-    this.$('.beer-list').append(beerView.render().el);
+    this.$beerList.append(beerView.render().el);
   },
 
   renderBeers: function () {
-    console.log('rendering beer list')
-  this.$('.beer-list').empty();
-  this.model.get('beers').each(function (m) {
-    this.renderBeer(m);
-  }, this);
-}
+    this.$beerList.empty()
+    this.model.get('beers').each(function (m) {
+      this.renderBeer(m);
+    }, this);
+  }
 });

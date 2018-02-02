@@ -1,17 +1,20 @@
 var BeerModel = Backbone.Model.extend({
-  defaults: function (){
+  idAttribute: "_id",
+  defaults: function () {
     return {
-      name: 'beer',
-      editMode: false
+      name: '',
+      style: '',
+      image_url: '',
+      abv: null,
+      reviews: new ReviewsCollection()
     }
-  }
-})
+  },
+  parse: function (response) {
+  var reviews = this.get('reviews') || new ReviewsCollection();
 
+  reviews.set(response.reviews);
+  response.reviews = reviews
 
-// createBeer: function () {
-//   this.model.get('beers').add({
-//     name: this.$(nameInput).val(),
-//     style: this.$(styleInput).val(),
-//     abv: this.$(abvInput).val(),
-//     image_url: this.$(imgUrl).val()
-//   });
+  return response;
+}
+});
